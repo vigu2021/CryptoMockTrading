@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; height: 70vh;">
+    <div style="
+        background-color: #333;
+        color: white;
+        padding: 2rem 3rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;">
+        <h1 style="margin-bottom: 1.5rem; font-size: 2rem;">Sign Up</h1>
+        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            
+            <!-- Username Field -->
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <label for="id_username" style="margin-bottom: 0.5rem;">Username:</label>
+                <input type="text" name="username" id="id_username" style="width: 100%; padding: 0.5rem; border-radius: 5px; border: none;" required>
+            </div>
+
+            <!-- Password Field with Show Button -->
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <label for="id_password1" style="margin-bottom: 0.5rem;">Password:</label>
+                <div style="display: flex; width: 100%; border-radius: 5px; overflow: hidden; border: 1px solid #ccc;">
+                    <input type="password" name="password1" id="id_password1" style="flex-grow: 1; padding: 0.5rem; border: none;" required>
+                    <button type="button" id="togglePassword1" style="
+                        padding: 0.5rem 1rem;
+                        background: linear-gradient(135deg, #1e90ff, #0073e6);
+                        color: white;
+                        border: none;
+                        font-size: 0.9rem;
+                        cursor: pointer;">Show</button>
+                </div>
+            </div>
+
+            <!-- Confirm Password Field with Show Button -->
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <label for="id_password2" style="margin-bottom: 0.5rem;">Confirm Password:</label>
+                <div style="display: flex; width: 100%; border-radius: 5px; overflow: hidden; border: 1px solid #ccc;">
+                    <input type="password" name="password2" id="id_password2" style="flex-grow: 1; padding: 0.5rem; border: none;" required>
+                    <button type="button" id="togglePassword2" style="
+                        padding: 0.5rem 1rem;
+                        background: linear-gradient(135deg, #1e90ff, #0073e6);
+                        color: white;
+                        border: none;
+                        font-size: 0.9rem;
+                        cursor: pointer;">Show</button>
+                </div>
+            </div>
+
+            <!-- Register Button -->
+            <button type="submit" style="
+                padding: 0.8rem;
+                font-size: 1.1rem;
+                font-weight: bold;
+                background: linear-gradient(135deg, #1e90ff, #0073e6);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;">
+                Register
+            </button>
+        </form>
+        <p style="margin-top: 1.5rem;">Already have an account? <a href="{% url 'login' %}" style="color: #1e90ff; text-decoration: none;">Login</a></p>
+    </div>
+</div>
+
+<!-- JavaScript for Toggle Password -->
+<script>
+    document.getElementById('togglePassword1').addEventListener('click', function () {
+        const passwordField = document.getElementById('id_password1');
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            this.textContent = 'Hide';
+        } else {
+            passwordField.type = 'password';
+            this.textContent = 'Show';
+        }
+    });
+
+    document.getElementById('togglePassword2').addEventListener('click', function () {
+        const passwordField = document.getElementById('id_password2');
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            this.textContent = 'Hide';
+        } else {
+            passwordField.type = 'password';
+            this.textContent = 'Show';
+        }
+    });
+</script>
+{% endblock %} 

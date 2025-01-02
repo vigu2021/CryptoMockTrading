@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to CryptoTrader{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-top: 2rem; font-family: 'Arial', sans-serif;">
+    <h1 style="font-size: 2.5rem; font-weight: bold;">Welcome to CryptoTrader</h1>
+    <p style="font-size: 1.2rem; color: #ddd;">Your one-stop platform for trading cryptocurrencies!</p>
+    <p style="margin-top: 1.5rem; font-size: 1.1rem; color: #ccc;">Start your journey today!</p>
+    
+    <!-- Buttons Section -->
+    <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 2rem;">
+        <a href="{% url 'login' %}" style="text-decoration: none;">
+            <button style="
+                padding: 1rem 2.5rem;
+                font-size: 1.3rem;
+                font-weight: bold;
+                background: linear-gradient(135deg, #ff7f50, #ff4500);
+                color: white;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                transition: transform 0.2s, box-shadow 0.2s;
+            " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 12px rgba(0, 0, 0, 0.4)';"
+               onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.3)';">
+                Login
+            </button>
+        </a>
+        <a href="{% url 'register' %}" style="text-decoration: none;">
+            <button style="
+                padding: 1rem 2.5rem;
+                font-size: 1.3rem;
+                font-weight: bold;
+                background: linear-gradient(135deg, #32cd32, #228b22);
+                color: white;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                transition: transform 0.2s, box-shadow 0.2s;
+            " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 12px rgba(0, 0, 0, 0.4)';"
+               onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.3)';">
+                Sign Up
+            </button>
+        </a>
+    </div>
+</div>
+{% endblock %}
