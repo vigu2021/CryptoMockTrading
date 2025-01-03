@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CryptoTrader{% endblock %}</title>
+    <style>
+        /* Global styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1c1c1c; /* Darker grey for the page body */
+            color: white;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #333; /* Dark grey navbar */
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adds a subtle shadow for better separation */
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+            color: #1e90ff; /* Slight blue highlight on hover */
+        }
+
+        .navbar .brand a {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #1e90ff; /* Highlight brand with a slight blue tint */
+        }
+
+        .navbar .brand a:hover {
+            text-decoration: none;
+        }
+
+        .container {
+            padding: 2rem;
+        }
+
+        /* Button styles (optional global) */
+        button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #1e90ff, #0073e6); /* Blue gradient */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="brand">
+            <a href="{% url 'home_page' %}">CryptoTrader</a>
+        </div>
+        <div class="links">
+            {% if user.is_authenticated %}
+                <a href="{% url 'home_page' %}">Home</a>  <!-- Home link with valid URL -->
+                <a href="#">Portfolio</a>  <!-- Placeholder link for Portfolio -->
+                <a href="#">Spot</a>  <!-- Placeholder link for Spot -->
+                <a href="#">Futures</a>  <!-- Placeholder link for Futures -->
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: white; font-size: 1rem; font-weight: 500; cursor: pointer; text-decoration: underline;">
+                        Sign Out
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        {% block content %}
+        <!-- Page-specific content goes here -->
+        {% endblock %}
+    </div>
+</body>
+</html>
