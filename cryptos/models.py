@@ -85,6 +85,7 @@ class Orders(models.Model):
     stop_price = models.DecimalField(max_digits=20, decimal_places=10, null=True, blank=True)  # Optional stop price for stop-loss orders
     take_profit = models.DecimalField(max_digits=20, decimal_places=10, null=True, blank=True)  # Optional take-profit price
     stop_loss = models.DecimalField(max_digits=20, decimal_places=10, null=True, blank=True)  # Optional stop-loss value
+    is_buy = models.BooleanField() #Whether buy or sell
 
     class Meta:
         db_table = 'orders'
