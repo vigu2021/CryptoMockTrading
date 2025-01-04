@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Create Order - CryptoTrader
+{% endblock %}
+
+{% block content %}
+
+<!-- 
+  1) Display form errors in an alert if the form has errors.
+  2) We build a single string of all errors and call alert(...).
+-->
+{% if form.errors %}
+<script>
+    let errorMessage = "";
+    {% for field, field_errors in form.errors.items %}
+        {% for err in field_errors %}
+            errorMessage += "{{ field }}: {{ err|escapejs }}\n";
+        {% endfor %}
+    {% endfor %}
+
+    if (errorMessage) {
+        alert(errorMessage);
+    }
+</script>
+{% endif %}
+
+<style>
+  /* OPTIONAL: Dark gradient background if not already set in base.html */
+  body {
+      background: linear-gradient(130deg, #1a1a1a 0%, #232323 100%);
+      margin: 0;
+      padding: 0;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      color: #f1f1f1;
+  }
+
+  h2 {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
+  }
+
+  /* Form container styling */
+  .form-container {
+      width: 400px;
+      margin: 0 auto;
+      margin-bottom: 40px;
+      background-color: #2c2c2c;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      padding: 20px;
+  }
+
+  label {
+      color: #ffffff;
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: inline-block;
+  }
+
+  .form-control {
+      background-color: #444 !important;
+      color: #ffffff !important;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 15px;
+      transition: box-shadow 0.2s;
+      font-size: 0.95rem;
+  }
+  
+  .form-control:focus {
+      outline: none;
+      box-shadow: 0 0 5px #1e90ff;
+  }
+
+  /* Accent color for radio buttons (modern browsers) */
+  .form-check-input[value="True"] {
+      accent-color: #28a745; /* green for Buy */
+  }
+  .form-check-input[value="False"] {
+      accent-color: #dc3545; /* red for Sell */
+  }
+
+  /* Align radio choices horizontally, if desired */
+  .radio-group .form-check {
+      display: inline-block;
+      margin-right: 15px;
+  }
+
+  .radio-group label {
+      margin-left: 5px;
+  }
+
+  /* Submit button styling */
+  .btn-submit {
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1rem;
+      width: 100%;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-submit:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+</style>
+
+<h2>Create Order</h2>
+
+<div class="form-container">
+  <!-- Django form -->
+  <form method="POST">
+    {% csrf_token %}
+
+    <!-- Order Type -->
+    <div class="mb-3">
+      {{ form.order_type.label_tag }}
+      {{ form.order_type }}
+    </div>
+
+    <!-- Symbol -->
+    <div class="mb-3">
+      {{ form.symbol.label_tag }}
+      {{ form.symbol }}
+    </div>
+
+    <!-- Quantity -->
+    <div class="mb-3">
+      {{ form.quantity.label_tag }}
+      {{ form.quantity }}
+    </div>
+
+    <!-- Take Profit -->
+    <div class="mb-3">
+      {{ form.take_profit.label_tag }}
+      {{ form.take_profit }}
+    </div>
+
+    <!-- Stop Loss -->
+    <div class="mb-3">
+      {{ form.stop_loss.label_tag }}
+      {{ form.stop_loss }}
+    </div>
+
+    <!-- Buy/Sell Radio -->
+    <div class="mb-3">
+      {{ form.is_buy.label_tag }}<br>
+      <div class="radio-group">
+        {{ form.is_buy }}
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit">Submit</button>
+  </form>
+</div>
+{% endblock %}
+
