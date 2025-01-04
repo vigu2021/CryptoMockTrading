@@ -4,7 +4,8 @@ from django.shortcuts import render,redirect
 from cryptos.models import CryptoSymbols
 from cryptos.scripts.get_current_prices import get_current_prices
 from .forms import MarketOrderForm
-
+from .scripts import get_current_prices
+from decimal import Decimal
 @login_required
 def home_page(request):
     """
@@ -30,25 +31,26 @@ def get_updated_prices(request):
 def create_order(request):
     if request.method == 'POST':
         form = MarketOrderForm(request.POST)
-        if form.is_valid():
-            # Process or save the form
-            form.save()
+        order_type = form.cleaned_data['order_type']
+        symbol = form.cleaned_data['symbol']
+        quantity = form.cleaned_data['quantity']
+        is_buy = form.cleaned_data['is_buy']
+        current_price = Decimal(str(get_current_prices().get(symbol)))
 
-            # 1) If you do NOT want to redirect:
-            #    - just stay on this URL and optionally
-            #    - create a fresh form or keep the data.
-            
-            # If you WANT a blank form after a successful save, do:
-            form = MarketOrderForm()  # re-instantiate so it’s empty
-            # If you want to keep the data in the fields, skip this line.
+        #These fields are optional
+        take_profit = form.cleaned_data['take_profit'] if form.cleaned_data['take_profit'] else None
+        stop_loss = form.cleaned_data['stop_loss'] if form.cleaned_data['stop_loss'] else None
 
+        user = request.user
+        if order_type == 'MARKET':
+            if form.is_valid():
+                #handle_market_order(user,symbol,quantity,is_buy,current_price,take_profit,stop_loss)
+                form = MarketOrderForm()  
+            else:
+                pass
         else:
-            # Form is invalid => form already has errors & user data
-            # Don’t overwrite `form`; just let it fall through to re-render
-            pass
-    else:
-        # GET request => new blank form
-        form = MarketOrderForm()
+            # GET request => new blank form
+            form = MarketOrderForm()
 
     return render(request, 'spot.html', {'form': form})
 
