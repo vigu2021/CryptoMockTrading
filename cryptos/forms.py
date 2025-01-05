@@ -64,7 +64,47 @@ class MarketOrderForm(forms.ModelForm):
                         "Stop loss must be bigger than take profit for sell orders"
                     )
 
-
+'''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['symbol'].queryset = CryptoSymbols.objects.all()
+'''
+
+#Limit Order Form
+class LimitOrderForm(MarketOrderForm):
+    limit_price = forms.DecimalField(
+        max_digits=20,
+        decimal_places=10,
+        required=True,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+        label="Limit Price",
+    )
+    class Meta(MarketOrderForm.Meta):
+        fields = MarketOrderForm.Meta.fields + ['limit_price']
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        limit_price = cleaned_data.get('limit_price')
+
+        if limit_price and limit_price <= 0:
+            raise forms.ValidationError("Limit Price must be greater than 0")
+
+
+#Stop Limit Form
+class StopLimitOrderForm(LimitOrderForm):
+    stop_price = forms.DecimalField(
+        max_digits=20,
+        decimal_places=10,
+        required=True,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+        label="Stop Price",
+    )
+    class Meta(LimitOrderForm.Meta):
+        fields = LimitOrderForm.Meta.fields + ['stop_price']
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        stop_price = cleaned_data.get('stop_price')
+        if stop_price and stop_price <= 0:
+            raise forms.ValidationError("Stop Price must be greater than 0")
+    

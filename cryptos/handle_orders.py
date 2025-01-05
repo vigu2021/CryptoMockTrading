@@ -2,9 +2,7 @@ from django.db import transaction
 from .models import Orders, UserAvlbBalance, UserCrypto, CryptoSymbols
 from decimal import Decimal
 from django.core.exceptions import ValidationError
-import logging
 
-logger = logging.getLogger(__name__)
 
 def handle_market_order(user, symbol, quantity, is_buy, current_price, take_profit, stop_loss):
     try:
@@ -21,6 +19,12 @@ def handle_market_order(user, symbol, quantity, is_buy, current_price, take_prof
                     raise ValidationError("Insufficient Balance")
                 balance.avlb_balance -= transaction_cost
                 balance.save()
+
+
+                #Take profit can't be lower than current price for buy orders
+                if take_profit is not None and take_profit <= current_price:
+                    raise ValidationError("Take profit must be higher than current market price")
+                
 
                 # Create the order
                 order = Orders.objects.create(
@@ -49,9 +53,16 @@ def handle_market_order(user, symbol, quantity, is_buy, current_price, take_prof
                     user_crypto.save()
             else:
                 # Sell logic
+
                 user_crypto = UserCrypto.objects.get(user=user, symbol=crypto_symbol)
                 if user_crypto.quantity < quantity:
                     raise ValidationError("Quantity higher than the amount you own")
+                
+                #Take profit must be lower than current price for sell orders
+                if take_profit is not None and take_profit >= current_price:
+                    raise ValidationError("Take profit can't be higher than current price")
+                
+
                 proceeds = current_price * quantity
                 balance.avlb_balance += proceeds
                 balance.save()
@@ -76,13 +87,28 @@ def handle_market_order(user, symbol, quantity, is_buy, current_price, take_prof
                 else:
                     user_crypto.save()
 
-            logger.info(f"Order created: {order}")
+           
     except ValidationError as ve:
-        logger.error(f"Validation error: {ve}")
         raise ve
     except Exception as e:
-        logger.error(f"Unexpected error: {e}")
         raise ValidationError("An unexpected error occurred while processing the order.")
+
+'''
+def handle_limit_order(user, symbol, quantity, is_buy, current_price, take_profit, stop_loss,limit_price):
+    try:
+        with transaction.atomic():
+            balance = UserAvlbBalance.objects.get(user=user)
+
+            # Retrieve the CryptoSymbols instance
+            crypto_symbol = CryptoSymbols.objects.get(symbol=symbol)
+
+
+
+'''
+
+
+
+
 
 
 

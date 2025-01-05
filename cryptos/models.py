@@ -73,6 +73,28 @@ class UserBalance(models.Model):
 
 
 
+
+class UserLimitBalance(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Links to the User table
+    updated_at = models.DateTimeField(auto_now=True)  # Auto-updated timestamp
+    limit_balance = models.DecimalField(max_digits=20, decimal_places=10)  # Available balance
+    currency = models.CharField(max_length=10, default="USDT")
+
+    class Meta:
+        db_table = 'user_limit_balance'
+        indexes = [
+            models.Index(fields=['user']),  
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.limit_balance} {self.currency}"
+
+    def clean(self):
+        if self.limit_balance < 0:
+            raise ValidationError("Balance cannot be negative.")
+
+
+
 class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Links to the User table
     symbol = models.ForeignKey('CryptoSymbols', on_delete=models.CASCADE)  # Links to CryptoSymbols
@@ -96,3 +118,4 @@ class Orders(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.symbol.symbol} - {self.status}"
+    
