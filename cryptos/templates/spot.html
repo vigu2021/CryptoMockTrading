@@ -1,29 +1,12 @@
-{% extends 'base.html' %}
+<!-- spot.html -->
+
+{% extends 'base1.html' %}
 
 {% block title %}
     Create Order - CryptoTrader
 {% endblock %}
 
 {% block content %}
-
-<!-- 
-  1) Display form errors in an alert if the form has errors.
-  2) We build a single string of all errors and call alert(...).
--->
-{% if form.errors %}
-<script>
-    let errorMessage = "";
-    {% for field, field_errors in form.errors.items %}
-        {% for err in field_errors %}
-            errorMessage += "{{ field }}: {{ err|escapejs }}\n";
-        {% endfor %}
-    {% endfor %}
-
-    if (errorMessage) {
-        alert(errorMessage);
-    }
-</script>
-{% endif %}
 
 <style>
   /* OPTIONAL: Dark gradient background if not already set in base.html */
@@ -45,13 +28,13 @@
 
   /* Form container styling */
   .form-container {
-      width: 400px;
+      max-width: 600px;
       margin: 0 auto;
       margin-bottom: 40px;
       background-color: #2c2c2c;
       border-radius: 10px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-      padding: 20px;
+      padding: 30px;
   }
 
   label {
@@ -86,7 +69,7 @@
       accent-color: #dc3545; /* red for Sell */
   }
 
-  /* Align radio choices horizontally, if desired */
+  /* Align radio choices horizontally */
   .radio-group .form-check {
       display: inline-block;
       margin-right: 15px;
@@ -113,55 +96,202 @@
       transform: scale(1.05);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   }
+
+  /* Pop-up Alert Styling */
+  .popup-alert {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1050; /* Higher than other elements */
+      min-width: 300px;
+      max-width: 400px;
+      padding: 20px 20px 15px 20px; /* Increased top padding */
+      border-radius: 5px;
+      background-color: #dc3545; /* Bootstrap's alert-danger color */
+      color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .popup-alert.show {
+      opacity: 1;
+      transform: translateY(0);
+  }
+
+  /* Success Alert Styling */
+  .popup-success {
+      background-color: #28a745; /* Bootstrap's alert-success color */
+  }
+
+  /* Close button styling */
+  .popup-alert .close-btn {
+      position: absolute;
+      top: 10px; /* Adjusted to fit within increased padding */
+      right: 15px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+  }
 </style>
 
 <h2>Create Order</h2>
 
 <div class="form-container">
   <!-- Django form -->
-  <form method="POST">
+  <form method="POST" novalidate>
     {% csrf_token %}
+
+    <!-- Display General Form Errors as Pop-up Alert -->
+    {% if form.errors %}
+      <div id="popupAlert" class="popup-alert">
+        <button type="button" class="close-btn" aria-label="Close">&times;</button>
+        <ul style="margin: 0; padding-left: 20px;">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <!-- Display Success Message as Pop-up Alert -->
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <div id="popupSuccess" class="popup-alert popup-success">
+          <button type="button" class="close-btn" aria-label="Close">&times;</button>
+          {{ message }}
+        </div>
+      {% endif %}
+    {% endfor %}
 
     <!-- Order Type -->
     <div class="mb-3">
       {{ form.order_type.label_tag }}
       {{ form.order_type }}
+      {% if form.order_type.errors %}
+        <div class="text-danger">
+          {% for error in form.order_type.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Symbol -->
     <div class="mb-3">
       {{ form.symbol.label_tag }}
       {{ form.symbol }}
+      {% if form.symbol.errors %}
+        <div class="text-danger">
+          {% for error in form.symbol.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Quantity -->
     <div class="mb-3">
       {{ form.quantity.label_tag }}
       {{ form.quantity }}
+      {% if form.quantity.errors %}
+        <div class="text-danger">
+          {% for error in form.quantity.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Take Profit -->
     <div class="mb-3">
       {{ form.take_profit.label_tag }}
       {{ form.take_profit }}
+      {% if form.take_profit.errors %}
+        <div class="text-danger">
+          {% for error in form.take_profit.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Stop Loss -->
     <div class="mb-3">
       {{ form.stop_loss.label_tag }}
       {{ form.stop_loss }}
+      {% if form.stop_loss.errors %}
+        <div class="text-danger">
+          {% for error in form.stop_loss.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Buy/Sell Radio -->
     <div class="mb-3">
       {{ form.is_buy.label_tag }}<br>
       <div class="radio-group">
-        {{ form.is_buy }}
+        {% for radio in form.is_buy %}
+          <div class="form-check form-check-inline">
+            {{ radio.tag }}
+            {{ radio.choice_label|safe }}
+          </div>
+        {% endfor %}
       </div>
+      {% if form.is_buy.errors %}
+        <div class="text-danger">
+          {% for error in form.is_buy.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <button type="submit" class="btn-submit">Submit</button>
   </form>
 </div>
-{% endblock %}
 
+<!-- JavaScript to Handle Pop-up Alerts -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function to handle alerts
+      function handleAlert(alertId) {
+          const alertElement = document.getElementById(alertId);
+          if (alertElement) {
+              // Show the alert with fade-in effect
+              setTimeout(() => {
+                  alertElement.classList.add('show');
+              }, 100); // Slight delay to allow CSS transition
+
+              // Automatically hide after 2 seconds (2000 milliseconds)
+              setTimeout(() => {
+                  alertElement.classList.remove('show');
+              }, 2000);
+
+              // Allow manual dismissal
+              const closeBtn = alertElement.querySelector('.close-btn');
+              closeBtn.addEventListener('click', () => {
+                  alertElement.classList.remove('show');
+              });
+          }
+      }
+
+      // Handle Error Alert
+      handleAlert('popupAlert');
+
+      // Handle Success Alert
+      handleAlert('popupSuccess');
+  });
+</script>
+
+{% endblock %}

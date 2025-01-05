@@ -1,95 +1,94 @@
-from .models import UserAvlbBalance,UserCrypto,Orders
+from django.db import transaction
+from .models import Orders, UserAvlbBalance, UserCrypto, CryptoSymbols
 from decimal import Decimal
 from django.core.exceptions import ValidationError
-from datetime import datetime
+import logging
 
-def handle_market_order(user,symbol,quantity,is_buy,current_price,take_profit,stop_loss):
-    
-   
-    avaliable_balance = UserAvlbBalance.objects.get(user = user)
+logger = logging.getLogger(__name__)
 
-    #Buy logic 
-    if is_buy:
-        transaction_cost = current_price * quantity  #Transaction cost for order
+def handle_market_order(user, symbol, quantity, is_buy, current_price, take_profit, stop_loss):
+    try:
+        with transaction.atomic():
+            # Retrieve or create user balance
+            balance = UserAvlbBalance.objects.get(user=user)
 
-    #If transaction cost higher than avaliable_balance return error.
-        if transaction_cost > avaliable_balance.avlb_balance: 
-            raise ValidationError("Insufficent Balance")
-        
-        #Store record in orders table
-        Orders.objects.create(
-            user = user,
-            symbol = symbol,
-            status = "EXECUTED",
-            order_type = 'MARKET',
-            price = current_price,
-            quantity = quantity,
-            take_profit = take_profit,
-            stop_loss = stop_loss,
-            is_buy = is_buy
-        )
+            # Retrieve the CryptoSymbols instance
+            crypto_symbol = CryptoSymbols.objects.get(symbol=symbol)
 
-        #Deduct transaction cost and update time in UserAvlbBalance table
-        avaliable_balance.updated_at = datetime.now()
-        avaliable_balance.avlb_balance -= transaction_cost
-        avaliable_balance.save()
+            if is_buy:
+                transaction_cost = current_price * quantity
+                if balance.avlb_balance < transaction_cost:
+                    raise ValidationError("Insufficient Balance")
+                balance.avlb_balance -= transaction_cost
+                balance.save()
 
+                # Create the order
+                order = Orders.objects.create(
+                    user=user,
+                    symbol=crypto_symbol,
+                    order_type='MARKET',
+                    price=current_price,
+                    quantity=quantity,
+                    take_profit=take_profit,
+                    stop_loss=stop_loss,
+                    is_buy=is_buy,
+                    status='EXECUTED'
+                )
 
-        #Update UserCrypto table
-        object,created = UserCrypto.objects.get_or_create(
-            user = user,
-            symbol = symbol,
-            #If new instance is created
-            defaults={
-            'avg_price': current_price,
-            'quantity': quantity
-                     }
-        )
-        #If created just save the instance
-        if created:
-            object.save()
+                # Update UserCrypto
+                user_crypto, created = UserCrypto.objects.get_or_create(
+                    user=user,
+                    symbol=crypto_symbol,
+                    defaults={'avg_price': current_price, 'quantity': quantity}
+                )
+                if not created:
+                    # Update average price
+                    total_cost = user_crypto.avg_price * user_crypto.quantity + current_price * quantity
+                    user_crypto.quantity += quantity
+                    user_crypto.avg_price = total_cost / user_crypto.quantity
+                    user_crypto.save()
+            else:
+                # Sell logic
+                user_crypto = UserCrypto.objects.get(user=user, symbol=crypto_symbol)
+                if user_crypto.quantity < quantity:
+                    raise ValidationError("Quantity higher than the amount you own")
+                proceeds = current_price * quantity
+                balance.avlb_balance += proceeds
+                balance.save()
 
-        #Else we are updating a current instance
-        else:
-            object.updated_at = datetime.now()
-            object.avg_price = (current_price * quantity + object.avg_price * object.quantity)/(quantity + object.quantity)
-            object.quantity += quantity
-            object.save()
+                # Create the order
+                order = Orders.objects.create(
+                    user=user,
+                    symbol=crypto_symbol,
+                    order_type='MARKET',
+                    price=current_price,
+                    quantity=quantity,
+                    take_profit=take_profit,
+                    stop_loss=stop_loss,
+                    is_buy=is_buy,
+                    status='EXECUTED'
+                )
 
-    #Sell logic 
-    else:
-        # If you don't own the crypto you can't sell nothing.
-        try:
-            current_crypto = UserCrypto.objects.get(user = user)
-        except UserCrypto.DoesNotExist:
-            raise ValidationError("You don't own this crypto.")
-        
-        if current_crypto.quantity < quantity:
-            raise ValidationError("Quantity higher than the amount you own")
-        
-        
-        
+                # Update UserCrypto
+                user_crypto.quantity -= quantity
+                if user_crypto.quantity == 0:
+                    user_crypto.delete()
+                else:
+                    user_crypto.save()
 
-        
-
-        
-
-
-        
-        
-       
-        
-        
-
-
-
-
+            logger.info(f"Order created: {order}")
+    except ValidationError as ve:
+        logger.error(f"Validation error: {ve}")
+        raise ve
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        raise ValidationError("An unexpected error occurred while processing the order.")
 
 
 
 
 
-    
+            
 
-    
+            
 
