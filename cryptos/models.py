@@ -99,7 +99,7 @@ class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Links to the User table
     symbol = models.ForeignKey('CryptoSymbols', on_delete=models.CASCADE)  # Links to CryptoSymbols
     order_date = models.DateTimeField(auto_now_add=True)  # Automatically set when the order is created
-    status = models.CharField(max_length=20, default="PENDING")  # Status of the order (e.g., PENDING, EXECUTED, CANCELLED)
+    status = models.CharField(max_length=20, default="PENDING")  # Status of the order (e.g., PENDING, EXECUTED, COMPLETED,CANCELLED)
     order_type = models.CharField(max_length=20,default = 'MARKET')  # Order type (MARKET,LIMIT,STOPLIMIT)
     price = models.DecimalField(max_digits=20, decimal_places=10)  # Price at which the order is placed
     quantity = models.DecimalField(max_digits=20, decimal_places=10)  # Quantity of the asset being traded

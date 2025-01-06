@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .forms import CustomUserCreationForm  # Import the custom form
-from cryptos.models import UserAvlbBalance,UserBalance
+from cryptos.models import UserAvlbBalance,UserBalance,UserLimitBalance
 from decimal import Decimal
 
 
@@ -17,6 +17,7 @@ def register(request):
             login(request, user) 
             UserBalance.objects.create(user=user, balance=Decimal('1000.00'))  
             UserAvlbBalance.objects.create(user=user, avlb_balance=Decimal('1000.00')) 
+            UserLimitBalance.objects.create(user = user,limit_balance =Decimal('0.00'))
             return redirect('landing_page')  
     else:
         form = CustomUserCreationForm()
