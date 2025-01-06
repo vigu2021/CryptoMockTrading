@@ -50,7 +50,7 @@ class MarketOrderForm(forms.ModelForm):
             raise forms.ValidationError("Quantity must be greater than 0")
 
         # If buy take profit must be bigger than stop loss
-        if is_buy:
+        if is_buy == True:
             if stop_loss is not None and take_profit is not None:
                 if stop_loss > take_profit:
                     raise forms.ValidationError(
@@ -58,10 +58,9 @@ class MarketOrderForm(forms.ModelForm):
                     )
         else:
             # If the user selected "Sell"...
-            if stop_loss is not None and take_profit is not None:
-                if take_profit > stop_loss:
+            if stop_loss is not None or take_profit is not None:
                     raise forms.ValidationError(
-                        "Stop loss must be bigger than take profit for sell orders"
+                       "Stop Loss and Take profit not allowed for sell orders"
                     )
 
 '''

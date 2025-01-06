@@ -87,7 +87,7 @@ def handle_market_order(user, symbol, quantity, is_buy, current_price, take_prof
     except ValidationError as ve:
         raise ve
     except Exception as e:
-        raise ValidationError("An unexpected error occurred while processing the order.")
+        raise ValidationError(f"An unexpected error occurred while processing the order.{e}")
 
 
 #Creates order for limit and stop_limit

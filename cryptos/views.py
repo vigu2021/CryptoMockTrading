@@ -76,6 +76,7 @@ def create_order(request):
                     messages.success(request, "Order placed successfully!")
                     return redirect('home_page')  # Replace with your desired redirect
                 except ValidationError as ve:
+                    print(ve.message)
                     form.add_error(None, ve.message)
                 except Exception as e:
                     # Handle unexpected errors
