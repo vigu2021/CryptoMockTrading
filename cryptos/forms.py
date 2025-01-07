@@ -50,7 +50,7 @@ class MarketOrderForm(forms.ModelForm):
             raise forms.ValidationError("Quantity must be greater than 0")
 
         # If buy take profit must be bigger than stop loss
-        if is_buy == True:
+        if is_buy == 'True':
             if stop_loss is not None and take_profit is not None:
                 if stop_loss > take_profit:
                     raise forms.ValidationError(
@@ -62,7 +62,7 @@ class MarketOrderForm(forms.ModelForm):
                     raise forms.ValidationError(
                        "Stop Loss and Take profit not allowed for sell orders"
                     )
-
+        return cleaned_data
 '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -88,6 +88,7 @@ class LimitOrderForm(MarketOrderForm):
         if limit_price and limit_price <= 0:
             raise forms.ValidationError("Limit Price must be greater than 0")
 
+        return cleaned_data
 
 #Stop Limit Form
 class StopLimitOrderForm(LimitOrderForm):
@@ -106,4 +107,5 @@ class StopLimitOrderForm(LimitOrderForm):
         stop_price = cleaned_data.get('stop_price')
         if stop_price and stop_price <= 0:
             raise forms.ValidationError("Stop Price must be greater than 0")
-    
+        
+        return cleaned_data
