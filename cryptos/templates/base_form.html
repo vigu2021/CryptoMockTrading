@@ -1,0 +1,147 @@
+{% extends 'base1.html' %}
+
+{% block title %}
+    {% block page_title %}Form - CryptoTrader{% endblock %}
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Form Container */
+    .form-container {
+        padding: 20px;
+        background-color: #1f1f1f; /* Slightly lighter than body for contrast */
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7); /* Enhanced shadow */
+    }
+
+    .form-container h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #ffffff;
+        letter-spacing: 1px;
+    }
+
+    .form-container form label {
+        font-weight: bold;
+        color: #e0e0e0; /* Softer white for text */
+    }
+
+    .form-container form input, 
+    .form-container form select, 
+    .form-container form textarea {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        background-color: #333333;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .form-container form input:focus, 
+    .form-container form select:focus, 
+    .form-container form textarea:focus {
+        outline: none;
+        box-shadow: 0 0 8px rgba(30, 144, 255, 0.7); /* Blue glow for focus */
+    }
+
+    .form-container .btn-submit {
+        padding: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #007bff, #1e90ff); /* Blue gradient */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        width: 100%;
+    }
+
+    .form-container .btn-submit:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-container .form-check {
+        margin-top: 15px;
+    }
+
+    /* Radio Buttons */
+    .form-check-input {
+        accent-color: #1e90ff; /* Blue for radio buttons */
+    }
+
+    .form-check-inline {
+        margin-right: 15px;
+    }
+
+    .form-check-label {
+        font-weight: 600;
+        color: #fff;
+        margin-left: 5px;
+    }
+
+    /* Error Styles */
+    .form-container .text-danger {
+        color: #ff6b6b; /* Softer red */
+        font-size: 0.9rem;
+        margin-top: -10px;
+        margin-bottom: 10px;
+    }
+
+    .form-container input.is-invalid {
+        border: 1px solid #ff6b6b;
+        box-shadow: 0 0 5px rgba(255, 107, 107, 0.8); /* Red glow for invalid fields */
+    }
+
+    /* Error Alert */
+    .alert {
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 10px 15px;
+    }
+
+    .alert-danger {
+        background-color: #ff6b6b;
+        color: white;
+    }
+
+    .alert-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .alert-dismissible .btn-close {
+        color: white;
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center my-4">{% block header %}Order Form{% endblock %}</h2>
+
+    <!-- Messages Section -->
+    <div class="messages">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        {% block form_content %}
+        <!-- Specific form content will be rendered here -->
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

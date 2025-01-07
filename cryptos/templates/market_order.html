@@ -1,0 +1,54 @@
+{% extends 'base_form.html' %}
+
+{% block page_title %}
+    Market Order - CryptoTrader
+{% endblock %}
+
+{% block header %}
+    Market Order
+{% endblock %}
+
+{% block form_content %}
+<form method="POST" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+        {{ form.order_type.label_tag }}
+        {{ form.order_type }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.symbol.label_tag }}
+        {{ form.symbol }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.quantity.label_tag }}
+        {{ form.quantity }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.take_profit.label_tag }}
+        {{ form.take_profit }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.stop_loss.label_tag }}
+        {{ form.stop_loss }}
+    </div>
+
+    <div class="mb-3">
+        <label>{{ form.is_buy.label }}</label><br>
+        <div class="form-check form-check-inline">
+            {{ form.is_buy.0.tag }}
+            <label class="form-check-label">{{ form.is_buy.0.choice_label }}</label>
+        </div>
+        <div class="form-check form-check-inline">
+            {{ form.is_buy.1.tag }}
+            <label class="form-check-label">{{ form.is_buy.1.choice_label }}</label>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-submit">Submit Market Order</button>
+</form>
+{% endblock %}

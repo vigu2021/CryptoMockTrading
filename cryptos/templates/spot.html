@@ -1,297 +1,57 @@
-<!-- spot.html -->
-
 {% extends 'base1.html' %}
 
 {% block title %}
-    Create Order - CryptoTrader
+    Spot Trading - CryptoTrader
 {% endblock %}
 
 {% block content %}
-
 <style>
-  /* OPTIONAL: Dark gradient background if not already set in base.html */
-  body {
-      background: linear-gradient(130deg, #1a1a1a 0%, #232323 100%);
-      margin: 0;
-      padding: 0;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      color: #f1f1f1;
-  }
+    .order-type-tabs {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        gap: 20px; /* Increase spacing between the buttons */
+    }
 
-  h2 {
-      text-align: center;
-      margin-top: 30px;
-      margin-bottom: 20px;
-      font-weight: 600;
-      letter-spacing: 1px;
-  }
+    .order-type-tabs a {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1e90ff; /* Bright blue text */
+        text-decoration: none;
+        position: relative;
+        transition: color 0.3s ease;
+    }
 
-  /* Form container styling */
-  .form-container {
-      max-width: 600px;
-      margin: 0 auto;
-      margin-bottom: 40px;
-      background-color: #2c2c2c;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-      padding: 30px;
-  }
+    .order-type-tabs a:hover {
+        color: #ffffff; /* Change text color to white on hover */
+    }
 
-  label {
-      color: #ffffff;
-      font-weight: bold;
-      margin-bottom: 5px;
-      display: inline-block;
-  }
+    .order-type-tabs a::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -2px;
+        height: 2px;
+        background-color: #1e90ff; /* Blue glow effect */
+        transform: scaleX(0); /* Initially hidden */
+        transition: transform 0.3s ease-in-out;
+    }
 
-  .form-control {
-      background-color: #444 !important;
-      color: #ffffff !important;
-      border: none;
-      border-radius: 5px;
-      padding: 10px;
-      width: 100%;
-      margin-bottom: 15px;
-      transition: box-shadow 0.2s;
-      font-size: 0.95rem;
-  }
-  
-  .form-control:focus {
-      outline: none;
-      box-shadow: 0 0 5px #1e90ff;
-  }
-
-  /* Accent color for radio buttons (modern browsers) */
-  .form-check-input[value="True"] {
-      accent-color: #28a745; /* green for Buy */
-  }
-  .form-check-input[value="False"] {
-      accent-color: #dc3545; /* red for Sell */
-  }
-
-  /* Align radio choices horizontally */
-  .radio-group .form-check {
-      display: inline-block;
-      margin-right: 15px;
-  }
-
-  .radio-group label {
-      margin-left: 5px;
-  }
-
-  /* Submit button styling */
-  .btn-submit {
-      background-color: #007bff;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      font-weight: bold;
-      font-size: 1rem;
-      width: 100%;
-      padding: 12px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .btn-submit:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  }
-
-  /* Pop-up Alert Styling */
-  .popup-alert {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1050; /* Higher than other elements */
-      min-width: 300px;
-      max-width: 400px;
-      padding: 20px 20px 15px 20px; /* Increased top padding */
-      border-radius: 5px;
-      background-color: #dc3545; /* Bootstrap's alert-danger color */
-      color: #fff;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      opacity: 0;
-      transform: translateY(-20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-
-  .popup-alert.show {
-      opacity: 1;
-      transform: translateY(0);
-  }
-
-  /* Success Alert Styling */
-  .popup-success {
-      background-color: #28a745; /* Bootstrap's alert-success color */
-  }
-
-  /* Close button styling */
-  .popup-alert .close-btn {
-      position: absolute;
-      top: 10px; /* Adjusted to fit within increased padding */
-      right: 15px;
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 1.2rem;
-      cursor: pointer;
-  }
+    .order-type-tabs a:hover::after {
+        transform: scaleX(1); /* Expand the underline on hover */
+    }
 </style>
 
-<h2>Create Order</h2>
+<h2 class="text-center mb-4">Create Order</h2>
 
 <div class="form-container">
-  <!-- Django form -->
-  <form method="POST" novalidate>
-    {% csrf_token %}
-
-    <!-- Display General Form Errors as Pop-up Alert -->
-    {% if form.errors %}
-      <div id="popupAlert" class="popup-alert">
-        <button type="button" class="close-btn" aria-label="Close">&times;</button>
-        <ul style="margin: 0; padding-left: 20px;">
-          {% for field in form %}
-            {% for error in field.errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          {% endfor %}
-          {% for error in form.non_field_errors %}
-            <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-
-    <!-- Display Success Message as Pop-up Alert -->
-    {% for message in messages %}
-      {% if message.tags == 'success' %}
-        <div id="popupSuccess" class="popup-alert popup-success">
-          <button type="button" class="close-btn" aria-label="Close">&times;</button>
-          {{ message }}
-        </div>
-      {% endif %}
-    {% endfor %}
-
-    <!-- Order Type -->
-    <div class="mb-3">
-      {{ form.order_type.label_tag }}
-      {{ form.order_type }}
-      {% if form.order_type.errors %}
-        <div class="text-danger">
-          {% for error in form.order_type.errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
-      {% endif %}
+    <!-- Navigation to Specific Order Types -->
+    <div class="order-type-tabs">
+        <a href="{% url 'market_order_form' %}" class="btn">Market Order</a>
+        <a href="{% url 'limit_order_form' %}" class="btn">Limit Order</a>
+        <a href="{% url 'stop_limit_order_form' %}" class="btn">Stop Limit Order</a>
     </div>
-
-    <!-- Symbol -->
-    <div class="mb-3">
-      {{ form.symbol.label_tag }}
-      {{ form.symbol }}
-      {% if form.symbol.errors %}
-        <div class="text-danger">
-          {% for error in form.symbol.errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-
-    <!-- Quantity -->
-    <div class="mb-3">
-      {{ form.quantity.label_tag }}
-      {{ form.quantity }}
-      {% if form.quantity.errors %}
-        <div class="text-danger">
-          {% for error in form.quantity.errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-
-    <!-- Take Profit -->
-    <div class="mb-3">
-      {{ form.take_profit.label_tag }}
-      {{ form.take_profit }}
-      {% if form.take_profit.errors %}
-        <div class="text-danger">
-          {% for error in form.take_profit.errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-
-    <!-- Stop Loss -->
-    <div class="mb-3">
-      {{ form.stop_loss.label_tag }}
-      {{ form.stop_loss }}
-      {% if form.stop_loss.errors %}
-        <div class="text-danger">
-          {% for error in form.stop_loss.errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-
-    <!-- Buy/Sell Radio -->
-    <div class="mb-3">
-      {{ form.is_buy.label_tag }}<br>
-      <div class="radio-group">
-        {% for radio in form.is_buy %}
-          <div class="form-check form-check-inline">
-            {{ radio.tag }}
-            {{ radio.choice_label|safe }}
-          </div>
-        {% endfor %}
-      </div>
-      {% if form.is_buy.errors %}
-        <div class="text-danger">
-          {% for error in form.is_buy.errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-
-    <button type="submit" class="btn-submit">Submit</button>
-  </form>
 </div>
-
-<!-- JavaScript to Handle Pop-up Alerts -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      // Function to handle alerts
-      function handleAlert(alertId) {
-          const alertElement = document.getElementById(alertId);
-          if (alertElement) {
-              // Show the alert with fade-in effect
-              setTimeout(() => {
-                  alertElement.classList.add('show');
-              }, 100); // Slight delay to allow CSS transition
-
-              // Automatically hide after 2 seconds (2000 milliseconds)
-              setTimeout(() => {
-                  alertElement.classList.remove('show');
-              }, 2000);
-
-              // Allow manual dismissal
-              const closeBtn = alertElement.querySelector('.close-btn');
-              closeBtn.addEventListener('click', () => {
-                  alertElement.classList.remove('show');
-              });
-          }
-      }
-
-      // Handle Error Alert
-      handleAlert('popupAlert');
-
-      // Handle Success Alert
-      handleAlert('popupSuccess');
-  });
-</script>
-
 {% endblock %}
