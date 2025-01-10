@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-from .scheduler import start_scheduler 
 
 
 class CryptosConfig(AppConfig):
@@ -8,4 +7,5 @@ class CryptosConfig(AppConfig):
 
 
     def ready(self):
+        from .scheduler import start_scheduler 
         start_scheduler()  
