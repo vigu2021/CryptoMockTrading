@@ -12,10 +12,7 @@
 <form method="POST" novalidate>
     {% csrf_token %}
 
-    <div class="mb-3">
-        {{ form.order_type.label_tag }}
-        {{ form.order_type }}
-    </div>
+    <input type="hidden" name="order_type" value="MARKET">
 
     <div class="mb-3">
         {{ form.symbol.label_tag }}
