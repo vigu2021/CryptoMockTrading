@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
+from datetime import datetime
 
 class CryptoSymbols(models.Model):
     symbol = models.CharField(max_length=10, unique=True)
@@ -55,7 +55,7 @@ class UserAvlbBalance(models.Model):
 
 class UserBalance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(default=datetime.now)
     balance = models.DecimalField(max_digits=20, decimal_places=10)  # Total balance, cannot be negative
 
     class Meta:
@@ -112,7 +112,7 @@ class Orders(models.Model):
     class Meta:
         db_table = 'orders'
         indexes = [
-            models.Index(fields=['user', 'symbol']),  # Composite index for user and symbol
+            models.Index(fields=['user', 'status']),  # Composite index for user and symbol
             models.Index(fields=['order_date']),  # Index for order date
         ]
 

@@ -7,5 +7,6 @@ class CryptosConfig(AppConfig):
 
 
     def ready(self):
-        from .scheduler import start_scheduler 
-        start_scheduler()  
+        from .scheduler import start_balance_scheduler,start_order_status_scheduler
+        start_balance_scheduler()
+        start_order_status_scheduler()
