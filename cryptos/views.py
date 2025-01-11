@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render,redirect
-from cryptos.models import CryptoSymbols,Orders
+from cryptos.models import UserCrypto,UserAvlbBalance
 from .forms import MarketOrderForm,LimitOrderForm,StopLimitOrderForm
 from cryptos.scripts.get_current_prices import get_current_prices
 from .handle_orders import handle_market_order,handle_limit_order
@@ -20,10 +20,24 @@ def get_updated_prices(request):
     return JsonResponse(symbol_prices)
 
 
-#Central template for spot orders
-def spot(request):
-    return render(request, 'spot.html')
+@login_required
+def portfolio(request):
+    return HttpResponse('<h1> Hello </h1>')
 
+#Central template for spot orders
+@login_required
+def spot(request):
+    current_positions = UserCrypto.objects.filter(user = request.user)
+    current_avlb_balance = UserAvlbBalance.objects.get(user = request.user)
+    context = {
+        'current_positions': current_positions,
+        'current_avlb_balance':current_avlb_balance
+    }
+
+
+    return render(request, 'spot.html',context)
+
+@login_required
 def market_order_form(request):
 
     if request.method == 'POST':
@@ -67,6 +81,7 @@ def market_order_form(request):
     return render(request, 'market_order.html', {'form': form, 'order_type': 'market'})
 
 #Limit order form
+@login_required
 def limit_order_form(request):
     if request.method == 'POST':
         form = LimitOrderForm(request.POST)
@@ -112,6 +127,7 @@ def limit_order_form(request):
     return render(request, 'limit_order.html', {'form': form, 'order_type': 'limit'})
 
 #Stop limit form
+@login_required
 def stop_limit_order_form(request):
 
     if request.method == 'POST':
@@ -158,3 +174,5 @@ def stop_limit_order_form(request):
         form = StopLimitOrderForm()
 
     return render(request, 'stop_limit_order.html', {'form': form, 'order_type': 'stop_limit'})
+
+

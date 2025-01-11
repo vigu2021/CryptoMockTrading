@@ -89,9 +89,8 @@
         <div class="links">
             {% if user.is_authenticated %}
                 <a href="{% url 'home_page' %}">Home</a>
-                <a href="#">Portfolio</a>  <!-- Replace '#' with actual URLs as needed -->
+                <a href="{% url 'portfolio' %}">Portfolio</a>  <!-- Replace '#' with actual URLs as needed -->
                 <a href="{% url 'spot' %}">Spot</a>
-                <a href="#">Futures</a>
                 <form action="{% url 'logout' %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-link" style="background: none; border: none; color: white; font-size: 1rem; font-weight: 500; cursor: pointer; text-decoration: underline;">
