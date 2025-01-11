@@ -60,6 +60,7 @@ class UserBalance(models.Model):
 
     class Meta:
         db_table = 'user_balance'
+        ordering = ['-updated_at']
         indexes = [
             models.Index(fields=['user', 'updated_at']),  
         ]

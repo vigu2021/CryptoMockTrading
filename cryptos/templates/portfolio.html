@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio</title>
+  <style>
+    /* Reset and global styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212; /* Dark background */
+      color: #ffffff;           /* Light text */
+      padding: 20px;
+    }
+
+    /* Title */
+    .portfolio-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .portfolio-title h1 {
+      font-size: 3rem;
+      color: #1e88e5; /* Accent color */
+      margin-bottom: 0.5rem;
+    }
+
+    /* Main Balance and All Time Return */
+    .main-balance-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .main-balance {
+      font-size: 2.5rem;
+      color: #1e88e5;
+      margin-bottom: 10px;
+    }
+    .all-time-return {
+      font-size: 1.5rem;
+      color: #dddddd;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+      background: #1f1f1f;  /* Slightly lighter than body */
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1e88e5;
+    }
+    .stat-card p {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: #dddddd;
+    }
+
+    /* Classes for up/down/flat returns */
+    .return-up   { color: #00e676; } /* green */
+    .return-down { color: #f44336; } /* red */
+    .return-flat { color: #999999; } /* grey */
+
+  </style>
+</head>
+<body>
+
+  <!-- Title / Header -->
+  <div class="portfolio-title">
+    <h1>Portfolio Summary</h1>
+  </div>
+
+  <!-- Main Balance & All-Time Return -->
+  <div class="main-balance-section">
+    <!-- 2 decimal places for current balance -->
+    <div class="main-balance">
+      Current Balance: {{ current_balance|floatformat:2 }}
+    </div>
+
+    <!-- All-Time Return with conditional arrow -->
+    <div class="all-time-return">
+      Return from All Time:
+      {% if return_from_all_time > 0 %}
+        <span class="return-up">
+          ▲ {{ return_from_all_time|floatformat:2 }}%
+        </span>
+      {% elif return_from_all_time < 0 %}
+        <span class="return-down">
+          ▼ {{ return_from_all_time|floatformat:2 }}%
+        </span>
+      {% else %}
+        <span class="return-flat">
+          — {{ return_from_all_time|floatformat:2 }}%
+        </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Four smaller stats: Last Day, Last Week, Last Month, Last Year -->
+  <div class="stats-grid">
+    <!-- Last Day -->
+    <div class="stat-card">
+      <h3>Last Day</h3>
+      <p>
+        Balance: <span>{{ balance_last_day|floatformat:2 }}</span>
+      </p>
+      <p>
+        Return:
+        {% if return_from_last_day > 0 %}
+          <span class="return-up">▲ {{ return_from_last_day|floatformat:2 }}%</span>
+        {% elif return_from_last_day < 0 %}
+          <span class="return-down">▼ {{ return_from_last_day|floatformat:2 }}%</span>
+        {% else %}
+          <span class="return-flat">— {{ return_from_last_day|floatformat:2 }}%</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Last Week -->
+    <div class="stat-card">
+      <h3>Last Week</h3>
+      <p>
+        Balance: <span>{{ balance_last_week|floatformat:2 }}</span>
+      </p>
+      <p>
+        Return:
+        {% if return_from_last_week > 0 %}
+          <span class="return-up">▲ {{ return_from_last_week|floatformat:2 }}%</span>
+        {% elif return_from_last_week < 0 %}
+          <span class="return-down">▼ {{ return_from_last_week|floatformat:2 }}%</span>
+        {% else %}
+          <span class="return-flat">— {{ return_from_last_week|floatformat:2 }}%</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Last Month -->
+    <div class="stat-card">
+      <h3>Last Month</h3>
+      <p>
+        Balance: <span>{{ balance_last_month|floatformat:2 }}</span>
+      </p>
+      <p>
+        Return:
+        {% if return_from_last_month > 0 %}
+          <span class="return-up">▲ {{ return_from_last_month|floatformat:2 }}%</span>
+        {% elif return_from_last_month < 0 %}
+          <span class="return-down">▼ {{ return_from_last_month|floatformat:2 }}%</span>
+        {% else %}
+          <span class="return-flat">— {{ return_from_last_month|floatformat:2 }}%</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Last Year -->
+    <div class="stat-card">
+      <h3>Last Year</h3>
+      <p>
+        Balance: <span>{{ balance_last_year|floatformat:2 }}</span>
+      </p>
+      <p>
+        Return:
+        {% if return_from_last_year > 0 %}
+          <span class="return-up">▲ {{ return_from_last_year|floatformat:2 }}%</span>
+        {% elif return_from_last_year < 0 %}
+          <span class="return-down">▼ {{ return_from_last_year|floatformat:2 }}%</span>
+        {% else %}
+          <span class="return-flat">— {{ return_from_last_year|floatformat:2 }}%</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>
