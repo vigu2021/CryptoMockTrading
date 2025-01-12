@@ -1,0 +1,14 @@
+{% extends 'base1.html' %}
+
+{% block title %}
+    Chart of {{ symbol }} - CryptoTrader
+{% endblock title %}
+
+{% block content %}
+    <div class="container text-center">
+        <h1 class="my-4">Candlestick Chart for {{ symbol }}</h1>
+        <div id="chart-container">
+            {{ chart|safe }} <!-- Render the Plotly chart HTML -->
+        </div>
+    </div>
+{% endblock content %}

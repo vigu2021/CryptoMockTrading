@@ -25,17 +25,16 @@ def etl_runner(interval, start_date, end_date):
             # Extract and transform data for the symbol
             df = extract_transform_klines(symbol_name, interval, start_date, end_date)
 
-            # Get the related CryptoSymbols object
             symbol_obj = CryptoSymbols.objects.get(symbol=symbol_name)
 
-            # Use the load function to load the data into the database
+            # Load to databse
             load_to_database(df, symbol_obj)
 
         except Exception as e:
             print(f"An error occurred while processing symbol {symbol_name}: {e}")
 
 
-
+'''
 if __name__ == "__main__":
     interval = "5m"
 
@@ -46,3 +45,4 @@ if __name__ == "__main__":
 
     # Run the ETL process
     etl_runner(interval, start_date, end_date)
+'''

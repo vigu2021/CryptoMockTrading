@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from candlestick.models import Candlestick
+from .models import Candlestick
 from cryptos.models import CryptoSymbols
 from django.db import transaction
 
@@ -39,7 +39,6 @@ def extract_transform_klines(symbol, interval, start_date, end_date):
         if not klines:
             break  # Break if no more data is returned
         
-        # Append to the results
         all_klines.extend(klines)
         
         # Update start timestamp for the next batch
@@ -60,40 +59,32 @@ def extract_transform_klines(symbol, interval, start_date, end_date):
     
     return df
 
-#Test
-
-if __name__ == "__main__":
-    symbol = "BTCUSDT"
-    interval = "5m"  # 5-minute interval
-    start_date = "2023-01-01 00:00:00"
-    end_date = "2023-01-09 00:00:00"
-    
-    df = extract_transform_klines(symbol, interval, start_date, end_date)
-    print(df.head())
 
 
-def load_to_database(df, symbol_name):
-    
-    # Load candlestick data into the database.
+#Load to database
+def load_to_database(df, symbol_obj):
+
     try:
-        # Get the CryptoSymbols object for the given symbol_name
-        symbol = CryptoSymbols.objects.get(symbol=symbol_name)
+        # Create a list of Candlestick objects
+        candlestick_objects = [
+            Candlestick(
+                symbol=symbol_obj,
+                timestamp=row['Timestamp'],
+                open=row['Open'],
+                high=row['High'],
+                low=row['Low'],
+                close=row['Close'],
+                volume=row['Volume']
+            )
+            for _, row in df.iterrows()
+        ]
         
+        # Bulk insert using batch size of 500
         with transaction.atomic():
-            for _, row in df.iterrows():
-                # Create and save a Candlestick object for each row
-                Candlestick.objects.create(
-                    symbol=symbol,
-                    timestamp=row['Timestamp'],
-                    open=row['Open'],
-                    high=row['High'],
-                    low=row['Low'],
-                    close=row['Close'],
-                    volume=row['Volume']
-                )
-                
-        print(f"Successfully loaded {len(df)} rows into the database for symbol: {symbol_name}")
-    except CryptoSymbols.DoesNotExist:
-        print(f"Error: Symbol '{symbol_name}' not found in the database.")
+            for i in range(0, len(candlestick_objects), 500):
+                Candlestick.objects.bulk_create(candlestick_objects[i:i+500], batch_size=500)
+
+        print(f"Successfully loaded {len(candlestick_objects)} rows for symbol: {symbol_obj.symbol}")
+
     except Exception as e:
-        print(f"An error occurred while loading data: {e}")
+        print(f"An error occurred while loading data for symbol {symbol_obj.symbol}: {e}")

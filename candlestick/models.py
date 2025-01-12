@@ -15,7 +15,7 @@ class Candlestick(models.Model):
         indexes = [
             models.Index(fields=['symbol', 'timestamp'], name='symbol_timestamp_idx'),  # Updated index name
         ]
-        ordering = ['-timestamp'] 
+        ordering = ['timestamp'] 
 
     def __str__(self):
         return f"{self.symbol.symbol} - {self.timestamp}"

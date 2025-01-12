@@ -1,0 +1,79 @@
+{% extends 'base1.html' %}
+
+{% block title %}
+    Charts - CryptoTrader
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-4">Available Charts</h1>
+    <div class="row">
+        {% for symbol in symbols %}
+        <div class="col-md-3 my-2">
+            <a href="{% url 'chart_view' symbol=symbol %}" class="text-decoration-none">
+                <div class="card chart-card text-white bg-dark shadow-sm h-100">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="card-title mb-2">{{ symbol }}</h5>
+                        <p class="card-text">View candlestick chart for {{ symbol }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block styles %}
+<style>
+/* Make the .chart-card clickable & animate on hover */
+.chart-card {
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #1c1c1c !important;  /* Dark grey by default */
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+/* Change the card on hover to solid blue */
+.chart-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(30, 144, 255, 0.4);
+    background-color: #1e90ff !important;  /* Solid blue */
+    color: #fff !important;               /* Ensure text remains readable */
+}
+
+/* Tweak card text (optional) */
+.chart-card h5 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.chart-card p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0; /* reduce extra spacing */
+}
+</style>
+{% endblock styles %}
+
+{% block scripts %}
+<script>
+    // Optional: If you want extra JS logic on hover
+    document.addEventListener("DOMContentLoaded", function() {
+        const cards = document.querySelectorAll('.chart-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // e.g. do something on hover in
+            });
+            card.addEventListener('mouseleave', () => {
+                // e.g. do something on hover out
+            });
+        });
+    });
+</script>
+{% endblock scripts %}
