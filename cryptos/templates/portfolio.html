@@ -1,21 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portfolio</title>
-  <style>
-    /* Reset and global styles */
+{% extends 'base1.html' %}
+
+{% block title %}
+    Portfolio - CryptoTrader
+{% endblock title %}
+
+{% block content %}
+<!-- You can override or add styles here -->
+<style>
+    /* Reset and global styles (if needed) */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
+    /* Dark Theme Overrides */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #121212; /* Dark background */
-      color: #ffffff;           /* Light text */
-      padding: 20px;
+      background-color: #121212 !important; /* Dark background */
+      color: #ffffff !important;           /* Light text */
     }
 
     /* Title */
@@ -74,120 +76,144 @@
       color: #dddddd;
     }
 
+
+
     /* Classes for up/down/flat returns */
     .return-up   { color: #00e676; } /* green */
     .return-down { color: #f44336; } /* red */
     .return-flat { color: #999999; } /* grey */
 
-  </style>
-</head>
-<body>
+      /* Chart Container */
+      .chart-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #1f1f1f;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .chart-title {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #1e88e5;
+      margin-bottom: 20px;
+    }
+</style>
 
-  <!-- Title / Header -->
-  <div class="portfolio-title">
-    <h1>Portfolio Summary</h1>
+
+</style>
+
+<!-- Portfolio Title -->
+<div class="portfolio-title">
+  <h1>Portfolio Summary</h1>
+</div>
+
+<!-- Main Balance & All-Time Return -->
+<div class="main-balance-section">
+  <!-- 2 decimal places for current balance -->
+  <div class="main-balance">
+    Current Balance: {{ current_balance|floatformat:2 }}
   </div>
 
-  <!-- Main Balance & All-Time Return -->
-  <div class="main-balance-section">
-    <!-- 2 decimal places for current balance -->
-    <div class="main-balance">
-      Current Balance: {{ current_balance|floatformat:2 }}
-    </div>
+  <!-- All-Time Return with conditional arrow -->
+  <div class="all-time-return">
+    Return from All Time:
+    {% if return_from_all_time > 0 %}
+      <span class="return-up">
+        ▲ {{ return_from_all_time|floatformat:2 }}%
+      </span>
+    {% elif return_from_all_time < 0 %}
+      <span class="return-down">
+        ▼ {{ return_from_all_time|floatformat:2 }}%
+      </span>
+    {% else %}
+      <span class="return-flat">
+        — {{ return_from_all_time|floatformat:2 }}%
+      </span>
+    {% endif %}
+  </div>
+</div>
 
-    <!-- All-Time Return with conditional arrow -->
-    <div class="all-time-return">
-      Return from All Time:
-      {% if return_from_all_time > 0 %}
-        <span class="return-up">
-          ▲ {{ return_from_all_time|floatformat:2 }}%
-        </span>
-      {% elif return_from_all_time < 0 %}
-        <span class="return-down">
-          ▼ {{ return_from_all_time|floatformat:2 }}%
-        </span>
+<!-- Four smaller stats: Last Day, Last Week, Last Month, Last Year -->
+<div class="stats-grid">
+  <!-- Last Day -->
+  <div class="stat-card">
+    <h3>Last Day</h3>
+    <p>
+      Balance: <span>{{ balance_last_day|floatformat:2 }}</span>
+    </p>
+    <p>
+      Return:
+      {% if return_from_last_day > 0 %}
+        <span class="return-up">▲ {{ return_from_last_day|floatformat:2 }}%</span>
+      {% elif return_from_last_day < 0 %}
+        <span class="return-down">▼ {{ return_from_last_day|floatformat:2 }}%</span>
       {% else %}
-        <span class="return-flat">
-          — {{ return_from_all_time|floatformat:2 }}%
-        </span>
+        <span class="return-flat">— {{ return_from_last_day|floatformat:2 }}%</span>
       {% endif %}
-    </div>
+    </p>
   </div>
 
-  <!-- Four smaller stats: Last Day, Last Week, Last Month, Last Year -->
-  <div class="stats-grid">
-    <!-- Last Day -->
-    <div class="stat-card">
-      <h3>Last Day</h3>
-      <p>
-        Balance: <span>{{ balance_last_day|floatformat:2 }}</span>
-      </p>
-      <p>
-        Return:
-        {% if return_from_last_day > 0 %}
-          <span class="return-up">▲ {{ return_from_last_day|floatformat:2 }}%</span>
-        {% elif return_from_last_day < 0 %}
-          <span class="return-down">▼ {{ return_from_last_day|floatformat:2 }}%</span>
-        {% else %}
-          <span class="return-flat">— {{ return_from_last_day|floatformat:2 }}%</span>
-        {% endif %}
-      </p>
-    </div>
-
-    <!-- Last Week -->
-    <div class="stat-card">
-      <h3>Last Week</h3>
-      <p>
-        Balance: <span>{{ balance_last_week|floatformat:2 }}</span>
-      </p>
-      <p>
-        Return:
-        {% if return_from_last_week > 0 %}
-          <span class="return-up">▲ {{ return_from_last_week|floatformat:2 }}%</span>
-        {% elif return_from_last_week < 0 %}
-          <span class="return-down">▼ {{ return_from_last_week|floatformat:2 }}%</span>
-        {% else %}
-          <span class="return-flat">— {{ return_from_last_week|floatformat:2 }}%</span>
-        {% endif %}
-      </p>
-    </div>
-
-    <!-- Last Month -->
-    <div class="stat-card">
-      <h3>Last Month</h3>
-      <p>
-        Balance: <span>{{ balance_last_month|floatformat:2 }}</span>
-      </p>
-      <p>
-        Return:
-        {% if return_from_last_month > 0 %}
-          <span class="return-up">▲ {{ return_from_last_month|floatformat:2 }}%</span>
-        {% elif return_from_last_month < 0 %}
-          <span class="return-down">▼ {{ return_from_last_month|floatformat:2 }}%</span>
-        {% else %}
-          <span class="return-flat">— {{ return_from_last_month|floatformat:2 }}%</span>
-        {% endif %}
-      </p>
-    </div>
-
-    <!-- Last Year -->
-    <div class="stat-card">
-      <h3>Last Year</h3>
-      <p>
-        Balance: <span>{{ balance_last_year|floatformat:2 }}</span>
-      </p>
-      <p>
-        Return:
-        {% if return_from_last_year > 0 %}
-          <span class="return-up">▲ {{ return_from_last_year|floatformat:2 }}%</span>
-        {% elif return_from_last_year < 0 %}
-          <span class="return-down">▼ {{ return_from_last_year|floatformat:2 }}%</span>
-        {% else %}
-          <span class="return-flat">— {{ return_from_last_year|floatformat:2 }}%</span>
-        {% endif %}
-      </p>
-    </div>
+  <!-- Last Week -->
+  <div class="stat-card">
+    <h3>Last Week</h3>
+    <p>
+      Balance: <span>{{ balance_last_week|floatformat:2 }}</span>
+    </p>
+    <p>
+      Return:
+      {% if return_from_last_week > 0 %}
+        <span class="return-up">▲ {{ return_from_last_week|floatformat:2 }}%</span>
+      {% elif return_from_last_week < 0 %}
+        <span class="return-down">▼ {{ return_from_last_week|floatformat:2 }}%</span>
+      {% else %}
+        <span class="return-flat">— {{ return_from_last_week|floatformat:2 }}%</span>
+      {% endif %}
+    </p>
   </div>
 
-</body>
-</html>
+  <!-- Last Month -->
+  <div class="stat-card">
+    <h3>Last Month</h3>
+    <p>
+      Balance: <span>{{ balance_last_month|floatformat:2 }}</span>
+    </p>
+    <p>
+      Return:
+      {% if return_from_last_month > 0 %}
+        <span class="return-up">▲ {{ return_from_last_month|floatformat:2 }}%</span>
+      {% elif return_from_last_month < 0 %}
+        <span class="return-down">▼ {{ return_from_last_month|floatformat:2 }}%</span>
+      {% else %}
+        <span class="return-flat">— {{ return_from_last_month|floatformat:2 }}%</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Last Year -->
+  <div class="stat-card">
+    <h3>Last Year</h3>
+    <p>
+      Balance: <span>{{ balance_last_year|floatformat:2 }}</span>
+    </p>
+    <p>
+      Return:
+      {% if return_from_last_year > 0 %}
+        <span class="return-up">▲ {{ return_from_last_year|floatformat:2 }}%</span>
+      {% elif return_from_last_year < 0 %}
+        <span class="return-down">▼ {{ return_from_last_year|floatformat:2 }}%</span>
+      {% else %}
+        <span class="return-flat">— {{ return_from_last_year|floatformat:2 }}%</span>
+      {% endif %}
+    </p>
+  </div>
+</div>
+
+
+
+<div class="chart-container">
+  <div class="chart-title">Current Cryptocurrency Holdings</div>
+  <div>{{ chart|safe }}</div> <!-- Embed the chart here -->
+</div>
+
+{% endblock content %}

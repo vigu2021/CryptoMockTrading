@@ -9,6 +9,7 @@ from .handle_orders import handle_market_order,handle_limit_order
 from decimal import Decimal
 from django.contrib import messages
 from datetime import datetime, timedelta
+from .portfolio_charts import pie_chart
 
 @login_required
 def home_page(request):
@@ -114,6 +115,13 @@ def portfolio(request):
         "balance_last_year": balance_last_year_value,
         "return_from_last_year": return_from_last_year,
     }
+
+    current_holdings_fig = pie_chart(request.user)
+
+    # Convert the chart to HTML
+    chart_html = current_holdings_fig.to_html(full_html=False)
+    balance_context['chart'] = chart_html 
+
 
     return render(request, "portfolio.html", balance_context)
 
