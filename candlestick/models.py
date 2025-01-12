@@ -8,13 +8,18 @@ class Candlestick(models.Model):
     high = models.FloatField()
     open = models.FloatField()
     close = models.FloatField()
+    volume = models.FloatField(default = 0)
 
     class Meta:
         db_table = 'candlestick'
         indexes = [
             models.Index(fields=['symbol', 'timestamp'], name='symbol_timestamp_idx'),  # Updated index name
         ]
-        ordering = ['-timestamp']  # Default ordering by timestamp in descending order
+        ordering = ['-timestamp'] 
 
     def __str__(self):
         return f"{self.symbol.symbol} - {self.timestamp}"
+
+
+
+
