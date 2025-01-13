@@ -36,7 +36,6 @@ Here are some screenshots of the project:
 - **Landing Page**  
   ![Landing Page](screenshots/Landing%20page.png)
 
-*(Ensure that the `screenshots` folder exists in the repository, and the file paths match.)*
 
 ---
 
